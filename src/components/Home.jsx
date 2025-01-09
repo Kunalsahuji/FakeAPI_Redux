@@ -1,13 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ProductContext } from '../utils/Context';
 import Loading from './Loding';
 import axios from '../utils/axios';
+import { useSelector } from 'react-redux';
+import { ProductContext } from '../utils/Context';
 
 const Home = () => {
-    const [products] = useContext(ProductContext);
+    const { data: products } = useSelector((state) => state.products)
     const [filterProducts, setFilterProducts] = useState(null);
-
     const { search } = useLocation();
     const category = decodeURIComponent(search.split('=')[1]);
 
