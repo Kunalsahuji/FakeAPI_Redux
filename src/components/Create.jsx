@@ -4,10 +4,13 @@ import { nanoid } from 'nanoid';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useDispatch } from 'react-redux';
+import { adddata } from '../store/reducers/productSlice';
 
 
 const Create = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch()
     const [title, setTitle] = useState('');
     const [image, setImage] = useState('');
     const [category, setCategory] = useState('');
@@ -59,10 +62,9 @@ const Create = () => {
         };
 
         // Add product to context
-        setProducts([...products, product]);
-
-
-        localStorage.setItem("products", JSON.stringify([...products, product]))
+        // setProducts([...products, product]);
+        // localStorage.setItem("products", JSON.stringify([...products, product]))
+        dispatch(adddata(product))
         toast.success("Product Created!", {
             position: "top-center",
             autoClose: 1000,

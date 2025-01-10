@@ -1,5 +1,6 @@
 import axios from "../../utils/axios";
 import { setdata } from "../reducers/productSlice";
+import { adddata } from "../reducers/productSlice";
 
 export const asyncsetdata = () => async (dispatch, getState) => {
     try {
