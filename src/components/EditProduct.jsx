@@ -1,38 +1,52 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ProductContext } from '../utils/Context';
 import Loading from './Loding';
+import { useDispatch, useSelector } from 'react-redux';
+import { editdata } from '../store/actions/productAction';
 import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 const EditProduct = () => {
-    const [products, setProducts] = useContext(ProductContext);
+    const dispatch = useDispatch()
+    const { data: products } = useSelector(state => state.products)
     const [product, setProduct] = useState(null);
     const { id } = useParams();
     const navigate = useNavigate();
 
     useEffect(() => {
-        setProduct(products.find((p) => p.id == id));
-    }, [id, products]);
+        if (!product) setProduct(products.find((p) => p.id == id));
+    }, [id, product]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setProduct((prev) => ({ ...prev, [name]: value }));
+        setProduct((prev) => ({
+            ...prev,
+            [name]: name === "price" ? parseFloat(value) || 0 : value, // Convert price to a number or set to 0 if invalid
+        }));
     };
-
-    const saveChanges = () => {
-        const updatedProducts = products.map((p) =>
-            p.id == id ? product : p
-        );
-        setProducts(updatedProducts);
-        localStorage.setItem('products', JSON.stringify(updatedProducts));
-        toast.success("Product updated!", {
-            position: "top-center",
+    
+    const saveChanges = (e) => {
+        e.preventDefault();
+    
+        if (
+            product.title.trim().length < 5 ||
+            product.image.trim().length < 5 ||
+            product.category.trim().length < 5 ||
+            product.price <= 0 || // Adjusted to check for a valid number
+            product.description.trim().length < 5
+        ) {
+            toast.error("Each input must have valid values. Title, image, category, and description should have at least 5 characters, and price must be greater than 0.");
+            return;
+        }
+    
+        dispatch(editdata(product));
+        toast.success("Product Updated!", {
+            position: "top-right",
             autoClose: 1000,
             theme: "colored",
         });
-        navigate(`/details/${id}`);
+        navigate(-1);
     };
+    
 
     return product ? (
         <div className="w-[90%] lg:w-[70%] m-auto p-5  bg-white shadow-md rounded-lg overflow-x-hidden overflow-y-auto">
@@ -44,12 +58,12 @@ const EditProduct = () => {
                     placeholder="Image URL"
                     className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
                     onChange={handleInputChange}
-                    value={product.image}
+                    value={product?.image}
                 />
                 <input
                     type="text"
                     name="title"
-                    value={product.title}
+                    value={product?.title}
                     onChange={handleInputChange}
                     placeholder="Title"
                     className="p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
@@ -57,7 +71,7 @@ const EditProduct = () => {
                 <input
                     type="text"
                     name="category"
-                    value={product.category}
+                    value={product?.category}
                     onChange={handleInputChange}
                     placeholder="Category"
                     className="p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
@@ -65,14 +79,14 @@ const EditProduct = () => {
                 <input
                     type="number"
                     name="price"
-                    value={product.price}
+                    value={product?.price}
                     onChange={handleInputChange}
                     placeholder="Price"
                     className="p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
                 />
                 <textarea
                     name="description"
-                    value={product.description}
+                    value={product?.description}
                     onChange={handleInputChange}
                     placeholder="Description"
                     rows='5'

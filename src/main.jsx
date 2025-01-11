@@ -3,8 +3,8 @@ import './index.css'
 import App from './App.jsx'
 import { BrowserRouter } from 'react-router-dom'
 import Context from './utils/Context.jsx'
-import { ToastContainer } from 'react-toastify'
-import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { Provider } from 'react-redux'
 import { store } from './store/store.jsx'
 

@@ -1,14 +1,15 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import Loading from './Loding';
-import { ProductContext } from '../utils/Context';
 import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { deletedata } from '../store/actions/productAction';
 const Details = () => {
-    const [products, setProducts] = useContext(ProductContext);
     const [product, setProduct] = useState(null);
     const { id } = useParams();
     const navigate = useNavigate()
+    const dispatch = useDispatch()
+    const { data: products } = useSelector(state => state.products)
 
     // const getSingleProduct = async () => {
     //     try {
@@ -26,17 +27,16 @@ const Details = () => {
         if (!product) {
             setProduct(products.filter((p) => p.id == id)[0])
         }
-    }, [id, product, products])
+    }, [id])
 
     const productDeleteHandler = (id) => {
-        const filterProducts = products.filter((p) => p.id != id)
-        setProducts(filterProducts)
-        localStorage.setItem("products", JSON.stringify(filterProducts))
+        dispatch(deletedata(id))
         toast.success("Product Deleted!", {
             position: "top-right",
             autoClose: 1000,
             theme: "colored",
-        }); navigate('/')
+        });
+        navigate('/')
     }
 
     return product ? (

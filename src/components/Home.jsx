@@ -3,7 +3,6 @@ import { Link, useLocation } from 'react-router-dom';
 import Loading from './Loding';
 import axios from '../utils/axios';
 import { useSelector } from 'react-redux';
-import { ProductContext } from '../utils/Context';
 
 const Home = () => {
     const { data: products } = useSelector((state) => state.products)
@@ -23,7 +22,7 @@ const Home = () => {
     useEffect(() => {
         if (!filterProducts || category === 'undefined') setFilterProducts(products);
         if (category !== 'undefined') {
-            // getProductsCategory();
+            getProductsCategory();
             setFilterProducts(products.filter((p) => p.category == category))
         }
     }, [category, products]);
